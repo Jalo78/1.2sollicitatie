@@ -26,8 +26,7 @@ except:
     API_KEY = "PLAK_HIER_TIJDELIJK_JE_KEY_VOOR_TESTEN" 
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("models/gemini-1.5-flash") # Sneller voor web
-
+model = genai.GenerativeModel("models/gemini-flash-latest")
 STEM = "nl-BE-ArnaudNeural"
 
 # --- INSTRUCTIES ---
@@ -139,4 +138,5 @@ if audio_input:
             st.rerun()
             
         except sr.UnknownValueError:
+
             st.warning("Marc heeft je niet verstaan, probeer het nog eens.")
