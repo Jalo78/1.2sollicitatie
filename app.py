@@ -107,38 +107,49 @@ audio_input = mic_recorder(
 
 # 4. VERWERKING
 if audio_input:
-    # We hebben audio bytes!
-    import speech_recognition as sr
-    
-    try:
-        # STAP A: Converteren van Browser-audio (WebM) naar WAV
-        # We gebruiken pydub om de bytes te lezen en als WAV op te slaan
-        audio_segment = AudioSegment.from_file(io.BytesIO(audio_input['bytes']))
-        audio_segment.export("temp_input.wav", format="wav")
+    # Eerst checken: Hebben we deze audio al gehad?
+    if "last_processed_audio" not in st.session_state:
+        st.session_state.last_processed_audio = None
         
-        # STAP B: Herkennen
-        r = sr.Recognizer()
-        with sr.AudioFile("temp_input.wav") as source:
-            # Luister naar het geconverteerde bestand
-            audio_data = r.record(source)
-            
-            user_text = r.recognize_google(audio_data, language="nl-BE")
-            st.info(f"Jij zei: {user_text}")
-            
-            # Stuur naar Marc
-            ai_response = get_response_from_ai(user_text)
-            
-            # Marc spreekt terug
-            audio_file = asyncio.run(text_to_speech(ai_response))
-            
-            # Update state
-            st.session_state.last_audio = audio_file
-            st.session_state.last_text = ai_response
-            st.session_state.audio_counter += 1
-            st.rerun()
-            
-    except sr.UnknownValueError:
-        st.warning("Marc heeft je niet verstaan, probeer het nog eens.")
-    except Exception as e:
-        st.error(f"Er ging iets technisch mis: {e}")
+    # Als de bytes precies hetzelfde zijn als de vorige keer, doen we NIKS.
+    if audio_input['bytes'] == st.session_state.last_processed_audio:
+        pass # Stop, dit is oud nieuws!
+        
+    else:
+        # HIER start de verwerking pas voor NIEUWE audio
+        import speech_recognition as sr
+        
+        # Sla deze bytes op als 'verwerkt', zodat we niet in een loop komen
+        st.session_state.last_processed_audio = audio_input['bytes']
 
+        try:
+            # STAP A: Converteren van Browser-audio naar WAV
+            audio_segment = AudioSegment.from_file(io.BytesIO(audio_input['bytes']))
+            audio_segment.export("temp_input.wav", format="wav")
+            
+            # STAP B: Herkennen
+            r = sr.Recognizer()
+            with sr.AudioFile("temp_input.wav") as source:
+                audio_data = r.record(source)
+                
+                user_text = r.recognize_google(audio_data, language="nl-BE")
+                st.info(f"Jij zei: {user_text}")
+                
+                # Stuur naar Marc
+                ai_response = get_response_from_ai(user_text)
+                
+                # Marc spreekt terug
+                audio_file = asyncio.run(text_to_speech(ai_response))
+                
+                # Update state
+                st.session_state.last_audio = audio_file
+                st.session_state.last_text = ai_response
+                st.session_state.audio_counter += 1
+                
+                # Pagina verversen om het geluid te laten horen
+                st.rerun()
+                
+        except sr.UnknownValueError:
+            st.warning("Marc heeft je niet verstaan, probeer het nog eens.")
+        except Exception as e:
+            st.error(f"Er ging iets technisch mis: {e}")
