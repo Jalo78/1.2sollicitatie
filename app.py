@@ -3,6 +3,8 @@ import google.generativeai as genai
 import edge_tts
 import asyncio
 import os
+from pydub import AudioSegment
+import io
 from streamlit_mic_recorder import mic_recorder
 
 # --- PAGINA CONFIGURATIE ---
@@ -106,22 +108,20 @@ audio_input = mic_recorder(
 # 4. VERWERKING
 if audio_input:
     # We hebben audio bytes!
-    # Omdat spraak-naar-tekst complex is in de cloud zonder zware tools,
-    # sturen we de AUDIO direct naar Gemini (Gemini 1.5 kan luisteren!)
-    # Of we gebruiken Google Speech Recognition via een omweg.
-    # Voor nu: We gebruiken een simpele SpeechRecognition truc.
-    
     import speech_recognition as sr
-    import io
     
-    # Audio opslaan om te lezen
-    with open("temp_input.wav", "wb") as f:
-        f.write(audio_input['bytes'])
+    try:
+        # STAP A: Converteren van Browser-audio (WebM) naar WAV
+        # We gebruiken pydub om de bytes te lezen en als WAV op te slaan
+        audio_segment = AudioSegment.from_file(io.BytesIO(audio_input['bytes']))
+        audio_segment.export("temp_input.wav", format="wav")
         
-    r = sr.Recognizer()
-    with sr.AudioFile("temp_input.wav") as source:
-        audio_data = r.record(source)
-        try:
+        # STAP B: Herkennen
+        r = sr.Recognizer()
+        with sr.AudioFile("temp_input.wav") as source:
+            # Luister naar het geconverteerde bestand
+            audio_data = r.record(source)
+            
             user_text = r.recognize_google(audio_data, language="nl-BE")
             st.info(f"Jij zei: {user_text}")
             
@@ -137,6 +137,8 @@ if audio_input:
             st.session_state.audio_counter += 1
             st.rerun()
             
-        except sr.UnknownValueError:
+    except sr.UnknownValueError:
+        st.warning("Marc heeft je niet verstaan, probeer het nog eens.")
+    except Exception as e:
+        st.error(f"Er ging iets technisch mis: {e}")
 
-            st.warning("Marc heeft je niet verstaan, probeer het nog eens.")
