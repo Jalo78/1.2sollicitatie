@@ -27,7 +27,7 @@ except:
     st.stop()
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("models/gemini-flash-latest"))
 
 # --- 2. DE RECRUITERS (De Loterij) ---
 # Hier definiëren we de mogelijke personages
@@ -107,7 +107,9 @@ def get_response_from_ai(user_text):
         response = st.session_state.chat.send_message(user_text)
         return response.text
     except Exception as e:
-        return "Sorry, ik begreep dat niet."
+        # HIER IS DE VERANDERING: We printen de fout op het scherm!
+        st.error(f"Foutmelding van Google: {e}")
+        return "Er is een technische storing. Lees de rode tekst op het scherm."
 
 # --- DE APP ---
 st.title(f"👔 Solliciteren met {recruiter['naam']}")
@@ -185,3 +187,4 @@ if audio_input:
             st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
         except Exception as e:
             st.error(f"Foutmelding: {e}")
+
