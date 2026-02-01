@@ -27,7 +27,7 @@ except:
     st.stop()
 
 genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel("models/gemini-flash-latest"))
+model = genai.GenerativeModel("models/gemini-flash-latest")
 
 # --- 2. DE RECRUITERS (De Loterij) ---
 # Hier definiëren we de mogelijke personages
@@ -187,4 +187,5 @@ if audio_input:
             st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
         except Exception as e:
             st.error(f"Foutmelding: {e}")
+
 
