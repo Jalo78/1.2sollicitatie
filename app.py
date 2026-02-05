@@ -61,10 +61,13 @@ GESPREKSVERLOOP:
 5. Vraag: "Wat wil je zeker nog leren?"
 6. Vraag: "Werk je liever alleen of in een team?" 
 7. Vraag: "Wanneer kan je beginnen?"
-8. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is.
+8. Vraag: "Wil je voltijds werken of liever minder?" 
+9. Vraag: "Kan je in het weekend of 's nachts werken?"
+10. Vraag: " Wat wil jij nog vragen?"
+11. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is.
 
 EXTRA OPDRACHT (DE TIPS):
-Direct nadat je het gesprek hebt afgesloten (stap 8), geef je 2 KORTE TIPS over hoe de cursist het deed.
+Direct nadat je het gesprek hebt afgesloten (stap 11 ), geef je 2 KORTE TIPS over hoe de cursist het deed.
 Schrijf dit als: "Hier zijn nog 2 tips voor jou: ..."
 Focus op: luid spreken, zinsbouw, of om verduidelijking vragen.
 Hou de tips simpel en opbouwend.
@@ -202,6 +205,7 @@ if audio_input:
             st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
         except Exception as e:
             st.error(f"Foutmelding: {e}")
+
 
 
 
