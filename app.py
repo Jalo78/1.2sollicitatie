@@ -87,9 +87,12 @@ GESPREKSVERLOOP:
 3. Vraag: "Heb je al ervaring met dat werk?"
 4. Vraag: "Wat zijn jouw sterke punten?"
 5. Vraag: "Wat wil je zeker nog leren?"
-6. Vraag: "Werk je liever alleen of in een team?" 
+6. Vraag: "Werk je liever alleen of in een team?"
 7. Vraag: "Wanneer kan je beginnen?"
-8. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is.
+8. Vraag: "Wil je voltijds werken of liever minder?"
+9. Vraag: "Kan je in het weekend of 's nachts werken?"
+10. Vraag: " Wat wil jij nog vragen?"
+11. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is en 2 tips geven.
 
 EXTRA OPDRACHT (DE TIPS):
 Direct nadat je het gesprek hebt afgesloten (stap 8), geef je 2 KORTE TIPS over hoe de cursist het deed.
@@ -159,10 +162,10 @@ with col2:
     st.caption(f"Recruiter ({recruiter['geslacht']})")
 
 # B. Voortgangsbalk
-# We schatten dat een gesprek ongeveer 9 'beurten' heeft (start + 7 vragen + einde)
+# We schatten dat een gesprek ongeveer 11 'beurten' heeft (start + 7 vragen + einde)
 # history length begint op 2. Na start = 4. Na vraag 1 = 6.
 huidige_stappen = (len(st.session_state.history) - 2) // 2
-voortgang = min(huidige_stappen / 9, 1.0) 
+voortgang = min(huidige_stappen / 11, 1.0) 
 
 if huidige_stappen > 0:
     st.progress(voortgang, text=f"Gespreksvoortgang ({int(voortgang*100)}%)")
@@ -253,3 +256,4 @@ if "conversation_started" in st.session_state:
                     st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
                 except Exception as e:
                     st.error(f"Foutmelding: {e}")
+
