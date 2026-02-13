@@ -128,6 +128,8 @@ async def text_to_speech_memory(text):
     clean_text = re.sub(r'\bcv\b', 'cee vee', clean_text, flags=re.IGNORECASE)
     clean_text = re.sub(r'\bbv\b', 'bijvoorbeeld', clean_text, flags=re.IGNORECASE)
     clean_text = re.sub(r'\bbarema\b', 'bareema', clean_text, flags=re.IGNORECASE)
+    clean_text = re.sub(r'\vvoila\b', 'vwala', clean_text, flags=re.IGNORECASE)
+    
     
     # B. Genereren
     communicate = edge_tts.Communicate(clean_text, recruiter['stem'], rate="-20%")
@@ -261,5 +263,6 @@ if "conversation_started" in st.session_state:
                     st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
                 except Exception as e:
                     st.error(f"Foutmelding: {e}")
+
 
 
