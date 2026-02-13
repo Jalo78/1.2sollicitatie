@@ -83,21 +83,25 @@ BELANGRIJK:
 
 GESPREKSVERLOOP:
 1. START: "Hallo, ik ben {recruiter['naam']}. Hoe heet jij?"
-2. Vraag: "Voor welk beroep kom je solliciteren?"
-3. Vraag: "Heb je al ervaring met dat werk?"
-4. Vraag: "Wat zijn jouw sterke punten?"
-5. Vraag: "Wat wil je zeker nog leren?"
-6. Vraag: "Werk je liever alleen of in een team?"
-7. Vraag: "Wanneer kan je beginnen?"
-8. Vraag: "Wil je voltijds werken of liever minder?"
-9. Vraag: "Kan je in het weekend of 's nachts werken?"
-10. Vraag: " Wat wil jij nog vragen?"
-11. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is en 2 tips geven.
+2. Vraag: "Stel jezelf even kort voor?" 
+3. Vraag: "Voor welk beroep kom je solliciteren?"
+4. Vraag: "Heb je al ervaring met dat werk?"
+(INSTRUCTIE: Als de cursist 'JA' zegt of ervaring noemt, vraag dan kort: "Waar was dit of bij welk bedrijf was dat?". Als de cursist 'NEE' zegt, zeg dan vriendelijk "Dat is niet erg" en ga door naar vraag 5)
+5. Vraag: "Wat zijn jouw sterke punten?"
+6. Vraag: "Wat wil je zeker nog leren?"
+7. Vraag: "Werk je liever alleen of in een team?"
+8. Vraag: "Wanneer kan je beginnen?"
+9. Vraag: "Wil je voltijds werken of liever minder?"
+(INSTRUCTIE: Als de cursist 'deeltijds' zegt of minder wil werken, vraag dan kort: "Waarom wil je minder werken?". Als de cursist 'voltijds' zegt, zeg dan vriendelijk "Dat is niet erg" en ga door naar vraag 5)
+10. Vraag: "Kan je in het weekend of 's nachts werken?"
+11. Vraag: " Wat wil jij nog vragen?"
+12. AFSLUITING: Bedank de kandidaat en zeg dat het gesprek klaar is en 2 tips geven.
 
 EXTRA OPDRACHT (DE TIPS):
-Direct nadat je het gesprek hebt afgesloten (stap 8), geef je 2 KORTE TIPS over hoe de cursist het deed.
+Direct nadat je het gesprek hebt afgesloten (stap 12), geef je 2 KORTE TIPS over hoe de cursist het deed.
 Schrijf dit als: "Hier zijn nog 2 tips voor jou: ..."
-Focus op: luid spreken, zinsbouw, of om verduidelijking vragen.
+Dit is een MONDELING gesprek. Geef dus NOOIT tips over leestekens, hoofdletters of spelling!
+Focus op: volume, duidelijk spreken, zinsbouw, tempo, grammatica of om verduidelijking vragen.
 Hou de tips simpel en opbouwend.
 """
 
@@ -118,12 +122,13 @@ async def text_to_speech_memory(text):
     # A. Fonetische Wasstraat
     clean_text = text.replace("*", "").replace("###STOP###", "")
     clean_text = clean_text.replace("1.", "").replace("2.", "") 
-    
+        
     # Regex vervangingen (Alleen hele woorden)
     clean_text = re.sub(r'\bJan\b', 'Jann', clean_text)
     clean_text = re.sub(r'\bcv\b', 'cee vee', clean_text, flags=re.IGNORECASE)
     clean_text = re.sub(r'\bbv\b', 'bijvoorbeeld', clean_text, flags=re.IGNORECASE)
-
+    clean_text = re.sub(r'\bbarema\b', 'bareema', clean_text, flags=re.IGNORECASE)
+    
     # B. Genereren
     communicate = edge_tts.Communicate(clean_text, recruiter['stem'], rate="-20%")
     await communicate.save(temp_mp3)
@@ -162,10 +167,10 @@ with col2:
     st.caption(f"Recruiter ({recruiter['geslacht']})")
 
 # B. Voortgangsbalk
-# We schatten dat een gesprek ongeveer 11 'beurten' heeft (start + 7 vragen + einde)
+# We schatten dat een gesprek ongeveer 12 'beurten' heeft (start + 10 vragen + einde)
 # history length begint op 2. Na start = 4. Na vraag 1 = 6.
 huidige_stappen = (len(st.session_state.history) - 2) // 2
-voortgang = min(huidige_stappen / 11, 1.0) 
+voortgang = min(huidige_stappen / 12, 1.0) 
 
 if huidige_stappen > 0:
     st.progress(voortgang, text=f"Gespreksvoortgang ({int(voortgang*100)}%)")
@@ -256,4 +261,5 @@ if "conversation_started" in st.session_state:
                     st.warning("Ik kon je niet goed verstaan, probeer het nog eens.")
                 except Exception as e:
                     st.error(f"Foutmelding: {e}")
+
 
